@@ -4,14 +4,13 @@
 // @param `‹dir1›` - the relative directory of files to compile
 // @param `‹dir2›` - the relative directory for output files to go
 
-var
-    fs = require('fs')
-  , path = require('path')
-  , less = require('less')
+const fs = require('fs');
+const path = require('path');
+const less = require('less');
 
-var dir_start = process.cwd()                                         // directory from which node was run
-  , dir_in    = path.normalize(process.cwd() + '/' + process.argv[2]) // directory where less src files are
-  , dir_out   = path.normalize(process.cwd() + '/' + process.argv[3]) // directory to put output css
+const dir_start = process.cwd();                                       		// directory from which node was run
+const dir_in = path.normalize(process.cwd() + '/' + process.argv[2]) 	// directory where less src files are
+const dir_out = path.normalize(process.cwd() + '/' + process.argv[3]) 	// directory to put output css
 
 try {
   process.chdir(dir_in)
@@ -31,27 +30,27 @@ try {
 function theWork() {
   process.chdir(dir_in)
 
-  fs.readdir(dir_in, function (err, files) {
+  fs.readdir(dir_in, (err, files) => {
     if (err) return console.error('There was an error: ', err)
 
-    var less_files = files.filter(function (el) {
-      var ext = path.parse(el).ext
-      var name = path.parse(el).name
+    const less_files = files.filter((el) => {
+      const ext = path.parse(el).ext
+      const name = path.parse(el).name
       return (ext === '.less') && (name.slice(0,2) !== '__')
     })
 
-    less_files.forEach(function (el) {
-      var path_less = path.normalize(dir_in  + '/' + el)
-      var path_css  = path.normalize(dir_out + '/' + el.slice(0, el.length-5) + '.css')
+    less_files.forEach((el) => {
+      let path_less = path.normalize(dir_in  + '/' + el)
+      let path_css  = path.normalize(dir_out + '/' + el.slice(0, el.length-5) + '.css')
 
-      fs.readFile(path_less, 'utf8', function (err, data) {
+      fs.readFile(path_less, 'utf8',  (err, data) => {
         if (err) return console.error('There was an error: ', err)
-        less.render(data, function (error, output) {
+        less.render(data, (error, output) => {
           if (error) {
             console.error('FATAL! ' + path_less + ' does NOT compile due to:' + '\n    ' + error.message)
             console.log('Continuing to next file...')
           } else {
-            fs.writeFile(path_css, output.css, function (err, data) {
+            fs.writeFile(path_css, output.css,  (err, data) => {
               if (err) return console.error('There was an error: ', err)
               path_less = path_less.split(dir_start + '/')[1] // removes the first dir_start from string
               path_css = path_css.split(dir_start + '/')[1]   // removes the first dir_start from string
